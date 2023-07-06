@@ -12,6 +12,9 @@ It currently fills for you
   - Infinity corner tab
   - Residue shop tab
   - Card powers tab
+  - what pet is caught, and the current pity progress
+  - the pet rank
+  - the current wave for each expedition
 
 # How to
 
