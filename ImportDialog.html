@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/8.0.2/bignumber.min.js" integrity="sha512-7UzDjRNKHpQnkh1Wf1l6i/OPINS9P2DDzTwQNX79JxfbInCXGpgI1RPb3ZD+uTP3O5X7Ke4e0+cxt2TxV7n0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+  
+  <body>
+    <form>
+      <input type="file" 
+        accept=".txt"
+        id="uploadFile"
+      />
+      <br />
+    </form>
+    <br />
+    <p id="status"></p>
+  </body>
+
+  <script>
+    var fileInput = document.getElementById('uploadFile');
+    fileInput.addEventListener('change', handleFileUpload);
+
+    var cellsToUpdate =  [];
+    /**
+     * This function maintains a list of cells for batch updating
+     * */
+    function updateCell(sheetName, cell, value) {
+      cellsToUpdate.push({ sheetName, cell, value });
+    }
+    const bdToBigNumber = (bdSaveObject) => BigNumber(`${bdSaveObject.mantissa}e${bdSaveObject.exponent}`)
+
+    const cardCollection = [
+      {
+        id: 17,
+        name: "Att/HP",
+      },
+      {
+        id: 1,
+        name: "Potato",
+      },
+      {
+        id: 2,
+        name: "Class",
+      },
+      {
+        id: 3,
+        name: "Skull",
+      },
+      {
+        id: 9,
+        name: "Whack",
+      },
+      {
+        id: 7,
+        name: "Poop",
+      },
+      {
+        id: 4,
+        name: "Confection",
+      },
+      {
+        id: 14,
+        name: "Worm Quantity",
+      },
+      {
+        id: 15,
+        name: "Larva Quantity",
+      },
+      {
+        id: 16,
+        name: "Larva Efficiency",
+      },
+      {
+        id: 8,
+        name: "Milk",
+      },
+      {
+        id: 10,
+        name: "Brewing",
+      },
+      {
+        id: 11,
+        name: "Calcium",
+      },
+      {
+        id: 12,
+        name: "Fermenting",
+      },
+      {
+        id: 13,
+        name: "Residue",
+      },
+      {
+        id: 6,
+        name: "Item Rating",
+      },
+      {
+        id: 5,
+        name: "Reincarnation Exp",
+      },
+      {
+        id: 19,
+        name: "Pet Level Exp",
+      },
+      {
+        id: 18,
+        name: "Pet Damage",
+      },
+      {
+        id: 20,
+        name: "Pet Rank Exp",
+      },
+    ];
+
+    const infinityCorner = [
+      {
+        id: 1,
+        name: "Star (All upgrades)",
+        saveKey: "REP3UpgradeAllLevel",
+      },
+      {
+        id: 2,
+        name: "Attack",
+        saveKey: "REP3AttackLevel",
+      },
+      {
+        id: 3,
+        name: "HP",
+        saveKey: "REP3HPLevel",
+      },
+      {
+        id: 4,
+        name: "Potato",
+        saveKey: "REP3PotatoLevel",
+      },
+      {
+        id: 5,
+        name: "Class EXP",
+        saveKey: "REP3ClassExpLevel",
+      },
+      {
+        id: 6,
+        name: "Skull",
+        saveKey: "REP3SkullLevel",
+      },
+      {
+        id: 7,
+        name: "Confection",
+        saveKey: "REP3ConfectionLevel",
+      },
+      {
+        id: 8,
+        name: "Poop",
+        suggestedWeight: 1,
+        saveKey: "REP3PoopLevel",
+      },
+      {
+        id: 9,
+        name: "Whack Score",
+        saveKey: "REP3WhackScoreLevel",
+      },
+      {
+        id: 10,
+        name: "Item Rating",
+        saveKey: "REP3ItemRatingLevel",
+      },
+      {
+        id: 11,
+        name: "Milk",
+        saveKey: "REP3MilkLevel",
+      },
+      {
+        id: 12,
+        name: "Brewing EXP",
+        saveKey: "REP3BrewLevel",
+      },
+      {
+        id: 13,
+        name: "Larva Efficiency",
+        saveKey: "REP3LarvaEffLevel",
+      },
+      {
+        id: 14,
+        name: "Calcium",
+        saveKey: "REP3CalciumLevel",
+      },
+      {
+        id: 15,
+        name: "Fermenting EXP",
+        saveKey: "REP3FermentingLevel",
+      },
+      {
+        id: 16,
+        name: "Pet Damage",
+        saveKey: "REP3PetDmgLevel",
+      },
+      {
+        id: 17,
+        name: "Pet Level EXP",
+        saveKey: "REP3PetLevelExpLevel",
+      },
+      {
+        id: 18,
+        name: "Card Power",
+        saveKey: "REP3CardPowerLevel",
+      },
+      {
+        id: 19,
+        name: "Residue",
+        saveKey: "REP3ResidueBonusLevel",
+      },
+    ];
+
+    const cowShop = [
+      'CowShopAttackBonus',
+      'CowShopHPBonus',
+      'CowShopPotatoBonus',
+      'CowShopClassExpBonus',
+      'CowShopConfectionBonus',
+      'CowShopPerkBonus',
+      'CowShopReincarnationBonus',
+      'CowShopItemRatingBonus',
+      'CowShopMilkBonus',
+      'CowShopWormQtyBonus',
+      'CowShopBrewExp',
+      'CowShopPoopBonus',
+      'CowShopPetLevelExp',
+      'CowShopCalciumBonus',
+      'CowShopFermentingExp',
+      'CowShopCardPowerBonus',
+      'CowShopPetRankExp',
+      'CowShopCardExp',
+      'CowShopReincPtsBonus',
+      'CowShopPetDamageBonus',
+    ];
+
+    const INF_COL = 'H';
+    const INF_LINE = 6;
+
+    const COWS_COL = 'U';
+    const COWS_LINE = 5;
+    
+    const CARD_SHEET = 'Cards';
+    const CARD_TP_COL = 'G';
+    const CARD_PP_COL = 'H';
+    const CARD_LVL_COL = 'I';
+    const CARD_LINE = 23;
+
+    const CELL_MAP = {
+      AscensionCount: ['Reinc/Asc', 'AB3'],
+      ACUReincarnationLevel: ['Reinc/Asc', 'AB2']
+    }
+
+
+    function updateSpreadSheets(saveObject) {
+      // Update Static Cells With a map object. cf CELL_MAP
+      Object.keys(CELL_MAP).forEach((key) => updateCell(CELL_MAP[key][0], CELL_MAP[key][1], saveObject[key]));
+
+      updateCardPower(saveObject);
+      updateInfinityCorner(saveObject);
+      updateCowShop(saveObject);
+
+
+      // cellsToUpdate is a list with all the cells the google script needs to update.
+      // will close this html page on success
+      google.script.run.withSuccessHandler(() => google.script.host.close()).SetAllCellValue(cellsToUpdate);
+    }
+
+    function updateCardPower(saveObject) {
+      const findCardById = (id) => saveObject.CardsCollection?.find((saveCard) => saveCard.ID === id);
+      const formatCardData = (card) => {
+        const cardData = findCardById(card.id);
+        let tempPower = 0;
+        let permPower = 0;
+        let level = 0;
+        if (!cardData) {
+          return {
+            tempPower, permPower, level
+          };
+        }
+        tempPower = bdToBigNumber(cardData.PowerTempBD)
+                  .decimalPlaces(0, 6)
+                  .valueOf();
+        permPower = bdToBigNumber(cardData.PowerPermaBD)
+                  .decimalPlaces(0, 6)
+                  .valueOf();
+        level = cardData.Level;
+        return {
+          tempPower, permPower, level
+        };
+      }
+      cardCollection.forEach((card, index) => {
+        const cardData = formatCardData(card);
+        updateCell(CARD_SHEET, `${CARD_TP_COL}${CARD_LINE + index}`, cardData.tempPower);
+        updateCell(CARD_SHEET, `${CARD_PP_COL}${CARD_LINE + index}`, cardData.permPower);
+        updateCell(CARD_SHEET, `${CARD_LVL_COL}${CARD_LINE + index}`, cardData.level);
+      });
+    }
+
+    function updateInfinityCorner(saveObject) {
+      infinityCorner.forEach((item, index) => {
+        updateCell("Infinity Corner", `${INF_COL}${INF_LINE + index}`, saveObject[item.saveKey]);
+      });
+    }
+
+    function updateCowShop(saveObject) {
+      cowShop.forEach((saveKey, index) => {
+        updateCell("Cows", `${COWS_COL}${COWS_LINE + index}`, saveObject[saveKey]);
+      });
+    }
+
+    function handleFileUpload(e) {
+      if (!e.target.files) return;
+      const file = e.target.files[0];
+      const fileReader = new FileReader();
+      document.getElementById('status').textContent = 'Processing Save File...';
+
+      fileReader.onload = (event) => {
+        if (!event.target) return;
+        const compressedData = new Uint8Array(event.target.result);
+        const decompressedData = pako.inflate(compressedData);
+        const textDecoder = new TextDecoder("utf-8");
+        const decodedString = textDecoder.decode(decompressedData);
+
+        const startPosition = decodedString.indexOf("{");
+        const endPosition = decodedString.lastIndexOf("}") + 1;
+        const jsonString = decodedString.slice(startPosition, endPosition);
+
+        try {
+          const parsedJson = JSON.parse(jsonString);
+          updateSpreadSheets(parsedJson);
+        } catch (error) {
+          console.error("Invalid JSON:", error);
+          alert(error);
+        }
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    }
+  </script>
+</html>
