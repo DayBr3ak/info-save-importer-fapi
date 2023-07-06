@@ -19,15 +19,15 @@ It currently fills for you
 
 Start by opening the script editor, google will ask you to allow to trust code execution. You can proceed, but if you don't want to, you can leave this guide now, thanks for visiting.
 
-Now you should be able to see the default script hiroko included in the spreadsheet, which is named Code.gs
+Now you should be able to see the default script Hiroko included in the spreadsheet, which is named Code.gs
 
-Proceed to add to files named:
-  - ImportSaveDialog **make sure it's an HTML document**
-  - ImportSaveScript **make sure it's a script document**
+Proceed to add 2 files named:
+  - ImportSaveDialog **! make sure it's an HTML document**
+  - ImportSaveScript **! make sure it's a script document**
 
 ![finalresult](assets/scriptview.png)
 
-Then copy paste the docs in this github repo into those respective files
+Then copy paste the 2 respective files present in this github repo into those respective files
 
 Save everything and refresh the spreadsheet view. A '🥔 Menu' should appear on the top bar.
 
