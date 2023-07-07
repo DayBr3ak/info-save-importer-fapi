@@ -22,6 +22,7 @@
     </form>
     <br />
     <p id="status"></p>
+    <a id="downloadAnchorElem" style="display: none;">Download save as JSON file</a>
 </body>
 
 <script>
@@ -416,6 +417,17 @@
 
             try {
                 const parsedJson = JSON.parse(jsonString);
+
+                const DEBUG = false;
+                if (DEBUG) {
+                  // In case you want to inspect the save for development purpose, set DEBUG to true
+                  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(parsedJson, 0, 2));
+                  const dlAnchorElem = document.getElementById('downloadAnchorElem');
+                  dlAnchorElem.setAttribute("href", dataStr);
+                  dlAnchorElem.setAttribute("download", "fapi_save.json");
+                  dlAnchorElem.style.display = '';
+                }
+
                 updateSpreadSheets(parsedJson, () => {
                     document.getElementById('status').textContent = 'Done.';
                     toastMessage('Confirmation', 'The save data has been imported!');
