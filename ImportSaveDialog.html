@@ -346,9 +346,8 @@
             // also update pet capture
             updateCell("Pets", `${PET_CAPTURE_COL}${PET_CAPTURE_LINE + index}`, findPet.Locked === 1 ? "TRUE" : "FALSE");
             // update capture pity
-            const pityProgressPercent = findPet.CapturePity > 0 ? ((findPet.CaptureCurrent ?? 0) / findPet.CapturePity) : 0;
-            const pityProgressPercentFormatted = (pityProgressPercent * 100).toFixed(2);
-            updateCell("Pets", `${PET_CAPTURE_PITYPROGRESS_COL}${PET_CAPTURE_LINE + index}`, `${pityProgressPercentFormatted}%`);
+            const pityProgressValue = findPet.CaptureCurrent ?? 0;
+            updateCell("Pets", `${PET_CAPTURE_PITYPROGRESS_COL}${PET_CAPTURE_LINE + index}`, pityProgressValue);
         })
     }
 
