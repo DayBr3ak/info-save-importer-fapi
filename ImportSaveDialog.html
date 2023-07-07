@@ -4,6 +4,7 @@
 // Credits to Hirako for the full spreadsheet
 // Credits to https://github.com/gendelbendel for parsing the save data and making all the constants
 -->
+
 <head>
     <base target="_top">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
@@ -16,7 +17,7 @@
 
 <body>
     <form>
-        <input type="file" accept=".txt" id="uploadFile" />
+        <button id="openFileDialog">Import Save Data</button>
         <br />
     </form>
     <br />
@@ -27,6 +28,11 @@
     /* Utils */
     const bdToBigNumber = ({ mantissa, exponent }) => BigNumber(`${mantissa}e${exponent}`);
     const trueFalseConverter = (value) => value === 1 ? "TRUE" : "FALSE";
+    function toastMessage(title, message) {
+        return new Promise((resolve, reject) => {
+            google.script.run.withSuccessHandler(resolve).ToastMessage(title, message);
+        });
+    }
 
     /**
      * This function maintains a list of cells for batch updating
@@ -275,16 +281,20 @@
     const CELL_MAP = {
         AscensionCount: ['Reinc/Asc', 'AB3'],
         ACUReincarnationLevel: ['Reinc/Asc', 'AB2'],
+        // Pets Tab
         SoulKepoBall: ['Pets', 'AE80', trueFalseConverter],
         ExpeShopPetDropChanceLevel: ['Pets', 'AE81'],
         WAPPetDropChance: ['Pets', 'AE82'],
+        // Expedition Tab (Incomplete, work in progress)
+        SoulProteinShake: ['Expedition', 'AH79', trueFalseConverter],
+        ExpeShopPetDamageLevel: ['Expedition', 'AH80'],
     }
 
 
     /**
      * Main entry function for updating
      * */
-    function updateSpreadSheets(saveObject) {
+    function updateSpreadSheets(saveObject, callback) {
         // Update Static Cells With a map object. cf CELL_MAP
         Object.keys(CELL_MAP).forEach(
             (key) => {
@@ -303,7 +313,7 @@
 
         // cellsToUpdate is a list with all the cells the google script needs to update.
         // will close this html page on success
-        google.script.run.withSuccessHandler(() => google.script.host.close()).SetAllCellValue(cellsToUpdate);
+        google.script.run.withSuccessHandler(callback).SetAllCellValue(cellsToUpdate);
     }
 
     function updateCardPower(saveObject) {
@@ -377,8 +387,16 @@
     /**
      * Handling uploading and decoding of the save file
      * */
-    var fileInput = document.getElementById('uploadFile');
-    fileInput.addEventListener('change', handleFileUpload);
+    const button = document.getElementById('openFileDialog');
+    button.onclick = () => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.hidden = true;
+        fileInput.accept = ".txt";
+        fileInput.addEventListener('change', handleFileUpload);
+        fileInput.click();
+    };
+
     function handleFileUpload(e) {
         if (!e.target.files) return;
         const file = e.target.files[0];
@@ -398,10 +416,14 @@
 
             try {
                 const parsedJson = JSON.parse(jsonString);
-                updateSpreadSheets(parsedJson);
+                updateSpreadSheets(parsedJson, () => {
+                    document.getElementById('status').textContent = 'Done.';
+                    toastMessage('Confirmation', 'The save data has been imported!');
+                });
             } catch (error) {
                 console.error("Invalid JSON:", error);
-                alert(error);
+                document.getElementById('status').textContent = 'An error happend when processing the save';
+                toastMessage('Sorry', 'An error happened');
             }
         };
 

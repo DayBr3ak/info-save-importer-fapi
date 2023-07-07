@@ -29,6 +29,12 @@ function _SetCellValue(cellData) {
   sheet.getRange(cellData.cell).setValue(cellData.value);
 }
 
+// public
 function SetAllCellValue(list) {
   list.forEach(_SetCellValue);
+}
+
+// public
+function ToastMessage(title, message) {
+  SpreadsheetApp.getActive().toast(message, title);
 }
