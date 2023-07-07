@@ -23,6 +23,7 @@
 <script>
     /* Utils */
     const bdToBigNumber = ({ mantissa, exponent }) => BigNumber(`${mantissa}e${exponent}`);
+    const trueFalseConverter = (value) => value === 1 ? "TRUE" : "FALSE";
 
     /**
      * This function maintains a list of cells for batch updating
@@ -270,9 +271,11 @@
     // Generic map to update a cell with a key in the save file, feel free to extend.
     const CELL_MAP = {
         AscensionCount: ['Reinc/Asc', 'AB3'],
-        ACUReincarnationLevel: ['Reinc/Asc', 'AB2']
+        ACUReincarnationLevel: ['Reinc/Asc', 'AB2'],
+        SoulKepoBall: ['Pets', 'AE80', trueFalseConverter],
+        ExpeShopPetDropChanceLevel: ['Pets', 'AE81'],
+        WAPPetDropChance: ['Pets', 'AE82'],
     }
-
 
 
     /**
@@ -280,7 +283,13 @@
      * */
     function updateSpreadSheets(saveObject) {
         // Update Static Cells With a map object. cf CELL_MAP
-        Object.keys(CELL_MAP).forEach((key) => updateCell(CELL_MAP[key][0], CELL_MAP[key][1], saveObject[key]));
+        Object.keys(CELL_MAP).forEach(
+            (key) => {
+                // optionally transform a value (like a true/false for example)
+                const valueTransform = CELL_MAP[key][2] ?? ((value) => value);
+                updateCell(CELL_MAP[key][0], CELL_MAP[key][1], valueTransform(saveObject[key]))
+            }
+        );
 
         updateCardPower(saveObject);
         updateInfinityCorner(saveObject);

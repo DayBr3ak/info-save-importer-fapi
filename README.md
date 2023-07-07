@@ -13,6 +13,7 @@ It currently fills for you
   - Residue shop tab
   - Card powers tab
   - which pet is caught, and the current pity progress (even if it is caught)
+  - your pet capture chance (it fills the Keepo ball cell, and whack/expedition pet capture chance bought)
   - the pet rank
   - the current wave for each expedition
 
