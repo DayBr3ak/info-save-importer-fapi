@@ -375,13 +375,13 @@
     }
 
     function updateExpeditionWave(saveObject) {
-        saveObject.ExpeditionsCollection?.forEach((expe, index) => {
-            if (expe.ID === 0) return; // Skip, this is an invalid ID
-            // we have to sub 1 to index since we skipped
-
+        const waveIdOrder = [1, 2, 3, 4, 16, 5, 6, 7, 8, 9, 17, 10, 11, 12, 13, 14, 18, 15];
+        waveIdOrder.forEach((waveId, index) => {
+            const expe = saveObject.ExpeditionsCollection?.find(waveItem => waveItem.ID === waveId);
+            if (!expe) return;
             // Only unlocked Expeditions have a wave number
             const wave = expe.Locked === 0 ? 0 : expe.Room;
-            updateCell("Expedition", `${EXPE_WAVE_COL}${EXPE_WAVE_LINE + index - 1}`, wave);
+            updateCell("Expedition", `${EXPE_WAVE_COL}${EXPE_WAVE_LINE + index}`, wave);
         })
     }
 
