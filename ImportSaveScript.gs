@@ -1,4 +1,4 @@
-// Credits to Hirako for the full spreadsheet
+// Credits to Hiroko for the full spreadsheet
 // Credits to https://github.com/gendelbendel for parsing the save data and making all the constants
 
 /**
