@@ -18,7 +18,9 @@ function onOpen() {
 function ShowImportDialog() {
   var html = HtmlService.createHtmlOutputFromFile('ImportSaveDialog')
       .setTitle('Import your save file');
-  
+
+  var extraScript = HtmlService.createTemplateFromFile('GearExtension');
+  html.append(extraScript.getRawContent());
   SpreadsheetApp
     .getUi()
     .showSidebar(html);

@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/8.0.2/bignumber.min.js"
         integrity="sha512-7UzDjRNKHpQnkh1Wf1l6i/OPINS9P2DDzTwQNX79JxfbInCXGpgI1RPb3ZD+uTP3O5X7Ke4e0+cxt2TxV7n0qQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/break_infinity.js@2"></script>
 </head>
 
 <body>
@@ -281,7 +282,7 @@
     // Generic map to update a cell with a key in the save file, feel free to extend.
     const CELL_MAP = {
         AscensionCount: ['Reinc/Asc', 'AB3'],
-        ACUReincarnationLevel: ['Reinc/Asc', 'AB2'],
+        ReincarnationLevel: ['Reinc/Asc', 'AB2'],
         // Pets Tab
         SoulKepoBall: ['Pets', 'AE80', trueFalseConverter],
         ExpeShopPetDropChanceLevel: ['Pets', 'AE81'],
@@ -310,7 +311,7 @@
         updateCowShop(saveObject);
         updatePetRank(saveObject);
         updateExpeditionWave(saveObject);
-
+        getAllGearBonuses?.(saveObject);
 
         // cellsToUpdate is a list with all the cells the google script needs to update.
         // will close this html page on success
